@@ -1,0 +1,82 @@
+---
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['about'];
+  num?: string;
+}
+
+const { t, num } = Astro.props;
+---
+<section class="block" id="about" aria-labelledby="about-title">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="sec-head about-head">
+          <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
+          <h2 id="about-title" set:html={rich(t.title)} />
+        </div>
+        <div class="about-text">
+          {t.paragraphs.map((paragraph) => <p set:html={rich(paragraph)} />)}
+        </div>
+      </div>
+      <figure class="quote">
+        <blockquote><p set:html={rich(t.quote.text)} /></blockquote>
+        <figcaption>
+          <span class="quote-author">{t.quote.author}</span>
+          <span class="quote-role">{t.quote.role}</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <ul class="pillars" role="list">
+      {t.pillars.map((pillar) => (
+        <li class="pillar">
+          <div class="pillar-icon"><Icon name={pillar.icon} size={24} /></div>
+          <h3>{pillar.title}</h3>
+          <p set:html={rich(pillar.text)} />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .about-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; }
+  .sec-head.about-head { margin-bottom: 28px; }
+  .about-text p { font-size: 18px; color: #3b3f46; }
+  .about-text p + p { margin-top: 18px; }
+  .about-text p:first-child { font-weight: 500; color: var(--ink); }
+
+  .quote { position: relative; margin: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 26px; background: var(--ink); color: var(--white); padding: 44px 40px 40px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 34px) 100%, 0 100%); }
+  .quote::before { content: "\201C"; position: absolute; top: 4px; left: 30px; font-family: Georgia, serif; font-size: 88px; line-height: 1; color: var(--red); }
+  .quote blockquote { margin: 0; }
+  .quote p { font-family: var(--head); font-weight: 700; font-size: 28px; line-height: 1.12; text-transform: uppercase; padding-top: 18px; }
+  .quote p :global(em) { font-style: normal; color: var(--red); }
+  .quote figcaption { padding-top: 18px; border-top: 1px solid var(--line-dark); }
+  .quote-author, .quote-role { display: block; }
+  .quote-author { font-family: var(--head); font-weight: 700; font-size: 20px; letter-spacing: .04em; color: var(--white); }
+  .quote-role { margin-top: 2px; font-size: 14px; letter-spacing: .04em; color: var(--muted-light); }
+
+  .pillars { list-style: none; margin: 64px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .pillar { padding: 28px 26px 30px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); transition: border-color .25s, transform .25s, box-shadow .25s; }
+  .pillar:hover { border-color: var(--red); transform: translateY(-4px); box-shadow: var(--shadow); }
+  .pillar-icon { width: 52px; height: 52px; border-radius: 50%; background: var(--red); color: var(--white); display: grid; place-items: center; margin-bottom: 18px; }
+  .pillar h3 { font-size: 22px; font-weight: 700; color: var(--ink); }
+  .pillar h3::after { content: ""; display: block; width: 26px; height: 3px; background: var(--red); margin: 10px 0 12px; }
+  .pillar p { font-size: 15.5px; color: var(--muted); }
+
+  @media (max-width: 1080px) {
+    .pillars { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+  @media (max-width: 600px) {
+    .quote { padding: 40px 26px 34px; }
+    .quote p { font-size: 25px; }
+    .pillars { grid-template-columns: 1fr; margin-top: 48px; }
+  }
+</style>

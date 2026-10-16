@@ -1,0 +1,182 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import plantNight from '../assets/plant-night.jpg';
+import heroMine from '../assets/hero-mine.jpg';
+import railwayTunnel from '../assets/railway-tunnel.jpg';
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['solutions'];
+  num?: string;
+}
+
+const { t, num } = Astro.props;
+
+// Photo per tab, keyed by the tab `id` in en.ts. Widths never exceed the file's own width;
+// hero-mine reuses the hero's widths so the optimizer doesn't generate it twice.
+const photos: Record<string, { src: ImageMetadata; widths: number[]; position?: string }> = {
+  polyurethane: { src: plantNight, widths: [480, 768, 900] },
+  equipment: { src: heroMine, widths: [480, 768, 940], position: '50% 80%' },
+  railway: { src: railwayTunnel, widths: [480, 768, 920] },
+};
+
+const tabs = t.tabs.map((tab) => {
+  const photo = photos[tab.id];
+  if (!photo) throw new Error(`Solutions.astro: no photo mapped for tab "${tab.id}"`);
+  return { ...tab, photo };
+});
+---
+{/* Without JS the tab bar stays hidden and all panels are stacked. The script at the bottom sets `data-ready` on the section, which switches to tabs. */}
+<section class="block paper solutions" id="solutions" aria-labelledby="solutions-title" data-tabs>
+  <div class="container">
+    <div class="sec-head">
+      <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
+      <h2 id="solutions-title" set:html={rich(t.title)} />
+    </div>
+
+    <div class="tabs" role="tablist" aria-label={t.tabsLabel}>
+      {tabs.map((tab, i) => (
+        <button
+          type="button"
+          class="tab"
+          role="tab"
+          id={`tab-${tab.id}`}
+          aria-controls={`panel-${tab.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          <Icon name={tab.icon} size={20} />{tab.tab}
+        </button>
+      ))}
+    </div>
+
+    {tabs.map((tab, i) => (
+      <div class:list={['panel', { 'is-active': i === 0 }]} role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`}>
+        <div class="panel-media">
+          <Picture
+            src={tab.photo.src}
+            alt={tab.imageAlt}
+            formats={['avif', 'webp']}
+            widths={tab.photo.widths}
+            sizes="(max-width: 900px) 100vw, 500px"
+            style={tab.photo.position ? `object-position: ${tab.photo.position}` : undefined}
+          />
+          <p class="panel-caption" set:html={rich(tab.caption)} />
+        </div>
+        <div class="panel-body">
+          <h3 set:html={rich(tab.title)} />
+          <p set:html={rich(tab.text)} />
+          <h4 class="panel-label">{tab.listTitle}</h4>
+          <ul class="chips" role="list">
+            {tab.items.map((item) => (
+              <li class="chip">
+                <Icon name={item.icon} size={22} />
+                <div>
+                  <span class="chip-title">{item.title}</span>
+                  <span class="chip-text" set:html={rich(item.text)} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          {tab.tags && tab.tagsTitle && (
+            <>
+              <h4 class="panel-label">{tab.tagsTitle}</h4>
+              <ul class="tags" role="list">
+                {tab.tags.map((tag) => <li set:html={rich(tag)} />)}
+              </ul>
+            </>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  // Tabs: click, ArrowLeft/ArrowRight (wraps), Home/End, roving tabindex.
+  const root = document.querySelector<HTMLElement>('[data-tabs]');
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+
+    const select = (index: number, focus = false) => {
+      tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls') ?? '')?.classList.toggle('is-active', on);
+      });
+      if (focus) tabs[index]?.focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        let next: number;
+        if (event.key === 'ArrowRight') next = i === last ? 0 : i + 1;
+        else if (event.key === 'ArrowLeft') next = i === 0 ? last : i - 1;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = last;
+        else return;
+        event.preventDefault();
+        select(next, true);
+      });
+    });
+
+    root.dataset.ready = '';
+  }
+</script>
+
+<style>
+  .tabs { display: none; border-bottom: 2px solid var(--line); margin-bottom: 44px; }
+  .solutions[data-ready] .tabs { display: flex; }
+  .tab { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; background: none; border: 0; cursor: pointer; font-family: var(--head); font-weight: 700; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; color: var(--muted); transition: color .2s; }
+  .tab:hover, .tab[aria-selected="true"] { color: var(--ink); }
+  .tab::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; background: var(--red); transform: scaleX(0); transition: transform .25s ease; }
+  .tab[aria-selected="true"]::after { transform: scaleX(1); }
+  .tab[aria-selected="true"] :global(svg) { color: var(--red); }
+
+  .panel { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: stretch; }
+  .solutions:not([data-ready]) .panel + .panel { margin-top: 80px; padding-top: 80px; border-top: 1px solid var(--line); }
+  .solutions[data-ready] .panel:not(.is-active) { display: none; }
+
+  .panel-media { position: relative; align-self: start; height: 500px; border-radius: var(--radius); overflow: hidden; background: var(--ink); }
+  .panel-media :global(picture), .panel-media :global(img) { display: block; width: 100%; height: 100%; }
+  .panel-media :global(img) { object-fit: cover; }
+  .panel-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(18, 19, 21, .85), rgba(18, 19, 21, 0) 55%); }
+  .panel-caption { position: absolute; left: 28px; right: 28px; bottom: 26px; z-index: 2; color: var(--white); font-family: var(--head); font-weight: 600; font-size: 22px; line-height: 1.15; text-transform: uppercase; }
+  .panel-caption::before { content: ""; display: block; width: 40px; height: 3px; background: var(--red); margin-bottom: 14px; }
+
+  .panel-body h3 { font-size: 36px; font-weight: 800; color: var(--ink); }
+  .panel-body > p { margin-top: 14px; font-size: 17.5px; color: var(--muted); }
+  .panel-label { margin: 30px 0 14px; font-size: 14px; font-weight: 700; letter-spacing: .16em; color: var(--red); }
+
+  .chips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .chip { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color .2s; }
+  .chip:hover { border-color: var(--red); }
+  .chip > :global(svg) { margin-top: 2px; color: var(--red); }
+  .chip-title { display: block; font-family: var(--head); font-weight: 700; font-size: 17px; letter-spacing: .03em; line-height: 1.15; text-transform: uppercase; color: var(--ink); }
+  .chip-text { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--muted); }
+
+  .tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags li { padding: 6px 12px; background: var(--ink); color: var(--white); border-radius: 2px; font-family: var(--head); font-weight: 600; font-size: 14.5px; letter-spacing: .06em; text-transform: uppercase; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab, .tab::after { transition: none; }
+  }
+  @media (max-width: 900px) {
+    .panel { grid-template-columns: 1fr; gap: 40px; }
+    .solutions:not([data-ready]) .panel + .panel { margin-top: 56px; padding-top: 56px; }
+    .panel-media { height: 300px; }
+  }
+  @media (max-width: 600px) {
+    /* Three equal tabs, label under the icon, so none is hidden off-screen */
+    .solutions[data-ready] .tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; margin-bottom: 32px; }
+    .tab { flex-direction: column; justify-content: flex-start; gap: 6px; min-width: 0; padding: 12px 2px 14px; font-size: 14.5px; letter-spacing: .04em; line-height: 1.15; text-align: center; white-space: normal; }
+    .panel-body h3 { font-size: 30px; }
+    .chips { grid-template-columns: 1fr; }
+  }
+</style>

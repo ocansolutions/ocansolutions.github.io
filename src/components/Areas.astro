@@ -1,0 +1,73 @@
+---
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['areas'];
+  num?: string;
+}
+
+const { t, num } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+{/* White (the mockup had paper) so it doesn't sit right after the paper Model section. */}
+<section class="block" id="areas" aria-labelledby="areas-title">
+  <div class="container">
+    <div class="sec-head">
+      <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
+      <h2 id="areas-title" set:html={rich(t.title)} />
+      <p set:html={rich(t.lead)} />
+    </div>
+
+    <ul class="areas" role="list">
+      {t.items.map((item, i) => (
+        <li class="area">
+          <div class="area-top">
+            <div class="area-icon"><Icon name={item.icon} size={26} /></div>
+            <span class="area-num" aria-hidden="true">{pad(i + 1)}</span>
+          </div>
+          <h3 set:html={rich(item.title)} />
+          <ul class="area-list" role="list">
+            {item.bullets.map((bullet) => <li set:html={rich(bullet)} />)}
+          </ul>
+        </li>
+      ))}
+    </ul>
+
+    <div class="areas-quote">
+      <p set:html={rich(t.quote)} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .areas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .area { position: relative; overflow: hidden; padding: 34px 30px 32px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); transition: transform .25s, box-shadow .25s; }
+  .area::before { content: ""; position: absolute; left: 0; top: 0; height: 4px; width: 0; background: var(--red); transition: width .35s ease; }
+  .area:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .area:hover::before { width: 100%; }
+  .area-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; }
+  .area-icon { width: 56px; height: 56px; display: grid; place-items: center; background: var(--ink); color: var(--white); clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); }
+  .area-num { font-family: var(--head); font-weight: 800; font-size: 46px; line-height: 1; color: #e2e5e9; }
+  .area h3 { margin-bottom: 16px; font-size: 25px; font-weight: 700; color: var(--ink); }
+  .area-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .area-list li { display: flex; align-items: center; gap: 10px; font-size: 15.5px; color: #464a52; }
+  .area-list li::before { content: ""; flex: none; width: 6px; height: 6px; background: var(--red); transform: rotate(45deg); }
+
+  /* Dark quote band with a slanted red edge and the diagonal cut */
+  .areas-quote { position: relative; margin-top: 40px; padding: 40px 48px 44px 66px; background: var(--ink); color: var(--white); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 34px) 100%, 0 100%); }
+  .areas-quote::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 20px; background: var(--red); clip-path: polygon(0 0, 100% 0, 45% 100%, 0 100%); }
+  .areas-quote p { max-width: 900px; font-family: var(--head); font-weight: 700; font-size: clamp(24px, 3vw, 34px); line-height: 1.12; text-transform: uppercase; }
+  .areas-quote p :global(em) { font-style: normal; color: var(--red); }
+
+  @media (max-width: 1080px) {
+    .areas { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .areas { grid-template-columns: 1fr; }
+    .area { padding: 30px 24px 28px; }
+    .areas-quote { margin-top: 32px; padding: 32px 24px 44px 38px; }
+    .areas-quote::before { width: 12px; }
+  }
+</style>
