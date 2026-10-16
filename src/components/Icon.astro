@@ -1,0 +1,39 @@
+---
+// Inlines a Lucide icon as SVG at build time (no CDN, no runtime JS).
+// lucide-static has no `exports` map, so its files are read straight from `icons/<name>.svg`.
+// This also resolves aliases such as `filter`, which `icon-nodes.json` does not list.
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+
+interface Props {
+  name: string; // Lucide icon name, e.g. "pickaxe"
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 22, class: className } = Astro.props;
+
+const iconsDir = join(dirname(createRequire(import.meta.url).resolve('lucide-static/package.json')), 'icons');
+let source: string;
+try {
+  source = readFileSync(join(iconsDir, `${name}.svg`), 'utf8');
+} catch {
+  throw new Error(`Icon.astro: unknown Lucide icon "${name}"`);
+}
+const inner = source.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)?.[1]?.trim() ?? '';
+---
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  set:html={inner}
+/>

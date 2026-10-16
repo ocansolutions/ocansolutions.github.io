@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Stats from '../components/Stats.astro';
+import { en } from '../i18n/en';
+---
+<Base meta={en.meta}>
+  <Header t={en.header} />
+  <main id="main">
+    <Hero t={en.hero} />
+    <Stats t={en.stats} />
+    {/* Remaining sections are added in phases 2-3. */}
+  </main>
+</Base>

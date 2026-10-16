@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['stats'];
+}
+
+const { t } = Astro.props;
+---
+<div class="stats">
+  <div class="container">
+    <div class="stats-card">
+      {t.map((stat) => (
+        <div class="stat">
+          <div class="stat-icon"><Icon name={stat.icon} size={22} /></div>
+          <div>
+            {/* The final value is in the markup (JS off = readable). The page script (phase 3) counts up from data-count. */}
+            <b class="stat-value" data-count={stat.value} data-suffix={stat.suffix}>{stat.value}{stat.suffix}</b>
+            <span class="stat-label">{stat.label}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .stats { position: relative; z-index: 5; margin-top: -78px; }
+  .stats-card { background: var(--white); border-top: 4px solid var(--red); box-shadow: var(--shadow); display: grid; grid-template-columns: repeat(4, 1fr); }
+  .stat { padding: 28px 30px; display: flex; gap: 16px; align-items: center; }
+  .stat + .stat { border-left: 1px solid var(--line); }
+  .stat-icon { width: 48px; height: 48px; border-radius: 50%; background: #fbe9ea; color: var(--red); display: grid; place-items: center; flex: none; }
+  .stat-value { display: block; font-family: var(--head); font-weight: 800; font-size: 40px; line-height: 1; color: var(--ink); }
+  .stat-label { display: block; font-family: var(--head); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; line-height: 1.2; }
+
+  @media (max-width: 1080px) {
+    .stat { padding: 24px 20px; }
+    .stat-value { font-size: 34px; }
+  }
+  @media (max-width: 900px) {
+    .stats-card { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(3) { border-left: 0; }
+    .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 600px) {
+    .stat { flex-direction: column; align-items: flex-start; gap: 10px; padding: 20px 16px; }
+    .stat-icon { width: 40px; height: 40px; }
+    .stat-value { font-size: 30px; }
+    .stat-label { font-size: 12.5px; }
+  }
+</style>

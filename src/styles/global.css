@@ -1,0 +1,78 @@
+/* Tokens, reset and shared styles. Section styles live in each component's <style>. */
+
+:root {
+  --red: #d7262e;
+  --red-dark: #a81a21;
+  --ink: #121315;
+  --ink-2: #1b1d21;
+  --steel: #2a2d33;
+  --line-dark: rgba(255, 255, 255, .12);
+  --muted: #5d636d;
+  --muted-light: #a9aeb7;
+  --line: #e2e4e8;
+  --paper: #f4f4f2;
+  --white: #fff;
+  --radius: 6px;
+  --shadow: 0 18px 50px -20px rgba(18, 19, 21, .35);
+  --head: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { margin: 0; font-family: var(--body); font-size: 17px; line-height: 1.6; color: var(--ink-2); background: var(--white); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { font-family: var(--head); text-transform: uppercase; line-height: 1.02; margin: 0; letter-spacing: .005em; }
+p { margin: 0; }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.icon { flex: none; } /* size comes from the Icon component's `size` prop */
+
+/* ---------- Focus + skip link ---------- */
+/* Red ring on light surfaces; dark surfaces (header, hero, .dark) switch --focus to a light pink. */
+:focus-visible { outline: 3px solid var(--focus, var(--red)); outline-offset: 2px; }
+.skip-link { position: absolute; left: 16px; top: -100px; z-index: 100; background: var(--red); color: var(--white); padding: 10px 18px; font-family: var(--head); font-weight: 700; font-size: 16px; letter-spacing: .08em; text-transform: uppercase; border-radius: 3px; }
+.skip-link:focus { top: 12px; }
+
+/* ---------- Buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-family: var(--head); font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: .08em; padding: 14px 26px; border-radius: 3px; border: 2px solid transparent; cursor: pointer; transition: background .2s, color .2s, border-color .2s, transform .2s; }
+.btn .icon { transition: transform .2s; }
+.btn:hover .icon { transform: translateX(3px); }
+.btn-red { background: var(--red); color: var(--white); }
+.btn-red:hover { background: var(--red-dark); }
+.btn-ghost { border-color: rgba(255, 255, 255, .4); color: var(--white); }
+.btn-ghost:hover { border-color: var(--white); background: rgba(255, 255, 255, .06); }
+.btn-dark { background: var(--ink); color: var(--white); }
+.btn-dark:hover { background: var(--steel); }
+.btn-sm { padding: 10px 18px; font-size: 14.5px; }
+
+/* ---------- Section scaffolding ---------- */
+section.block { padding: 110px 0; }
+.paper { background: var(--paper); }
+.dark { --focus: #ffb3b6; background: var(--ink); color: var(--white); }
+.sec-head { max-width: 760px; margin-bottom: 56px; }
+.sec-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.eyebrow { display: inline-flex; align-items: center; gap: 12px; font-family: var(--head); font-weight: 700; font-size: 15px; letter-spacing: .16em; text-transform: uppercase; color: var(--red); margin-bottom: 14px; }
+.eyebrow .num { display: inline-grid; place-items: center; background: var(--red); color: var(--white); font-size: 13px; padding: 3px 8px; letter-spacing: .04em; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+.sec-head h2 { font-size: clamp(36px, 4.4vw, 56px); font-weight: 800; color: var(--ink); }
+.dark .sec-head h2 { color: var(--white); }
+.sec-head h2 em { font-style: normal; color: var(--red); }
+.sec-head p { margin-top: 18px; font-size: 18.5px; color: var(--muted); }
+.dark .sec-head p { color: var(--muted-light); }
+
+/* ---------- Reveal (hidden only while the page has the .js class, so no-JS stays readable) ---------- */
+.js .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .container { padding: 0 16px; }
+  section.block { padding: 72px 0; }
+  .sec-head { margin-bottom: 38px; }
+}

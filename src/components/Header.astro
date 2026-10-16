@@ -1,0 +1,100 @@
+---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
+import { site } from '../data/site';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['header'];
+}
+
+const { t } = Astro.props;
+---
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-sectors">
+      {t.sectors.map((sector) => <span>{sector}</span>)}
+    </div>
+    <div class="topbar-contact">
+      <a href={`tel:${site.phone.tel}`}><Icon name="phone" size={15} />{site.phone.display}</a>
+      <a href={`mailto:${site.email}`}><Icon name="mail" size={15} />{site.email}</a>
+    </div>
+  </div>
+</div>
+
+<header class="nav" id="nav">
+  <div class="container">
+    <Logo href="#top" sub={t.logoSub} />
+    <nav class="nav-links" id="navLinks">
+      {t.nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+    <div class="nav-right">
+      <a href="#contact" class="btn btn-red btn-sm">{t.cta}</a>
+      {/* Toggled by the page script (phase 3): adds .open to #nav and swaps aria-label / aria-expanded. */}
+      <button
+        class="burger"
+        id="burger"
+        type="button"
+        aria-label={t.menuOpen}
+        aria-expanded="false"
+        aria-controls="navLinks"
+        data-label-open={t.menuOpen}
+        data-label-close={t.menuClose}
+      >
+        <span class="i-menu"><Icon name="menu" size={28} /></span>
+        <span class="i-close"><Icon name="x" size={28} /></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .topbar, .nav { --focus: #ffb3b6; }
+
+  /* ---------- Utility bar ---------- */
+  .topbar { background: var(--ink); color: var(--muted-light); font-size: 13.5px; border-bottom: 1px solid var(--line-dark); }
+  .topbar .container { display: flex; justify-content: space-between; align-items: center; height: 38px; gap: 24px; }
+  .topbar-sectors { display: flex; gap: 22px; text-transform: uppercase; letter-spacing: .08em; font-family: var(--head); font-weight: 600; font-size: 13px; }
+  .topbar-sectors span::before { content: ""; display: inline-block; width: 6px; height: 6px; background: var(--red); margin-right: 8px; transform: translateY(-1px) rotate(45deg); }
+  .topbar-contact { display: flex; gap: 22px; }
+  .topbar-contact a { display: inline-flex; align-items: center; gap: 7px; }
+  .topbar-contact a:hover { color: var(--white); }
+
+  /* ---------- Sticky nav ---------- */
+  .nav { position: sticky; top: 0; z-index: 50; background: rgba(18, 19, 21, .96); backdrop-filter: blur(8px); border-bottom: 3px solid var(--red); }
+  .nav .container { display: flex; align-items: center; justify-content: space-between; height: 74px; gap: 24px; }
+  .nav-links { display: flex; align-items: center; gap: 30px; }
+  .nav-links a { font-family: var(--head); font-weight: 600; font-size: 16px; text-transform: uppercase; letter-spacing: .06em; color: #d9dbe0; position: relative; padding: 6px 0; }
+  .nav-links a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: 0; height: 2px; background: var(--red); transition: right .25s ease; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { right: 0; }
+  .nav-right { display: flex; align-items: center; gap: 18px; }
+  .burger { display: none; background: none; border: 0; color: var(--white); padding: 8px; cursor: pointer; }
+  .burger span { display: flex; }
+  .burger .i-close { display: none; }
+  .nav.open .burger .i-menu { display: none; }
+  .nav.open .burger .i-close { display: flex; }
+
+  @media (max-width: 1080px) {
+    .nav-links { gap: 20px; }
+    .nav-links a { font-size: 15px; }
+  }
+  @media (max-width: 900px) {
+    .topbar-sectors { display: none; }
+    .topbar .container { justify-content: center; }
+    .nav-right .btn { display: none; }
+
+    /* With JS: the burger opens a dropdown. Without JS the links just wrap under the logo. */
+    :global(.js) .burger { display: block; }
+    :global(.js) .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--ink); flex-direction: column; align-items: stretch; gap: 0; padding: 8px 24px 20px; border-bottom: 3px solid var(--red); }
+    :global(.js) .nav.open .nav-links { display: flex; }
+    :global(.js) .nav-links a { padding: 14px 0; border-bottom: 1px solid var(--line-dark); }
+    :global(html:not(.js)) .nav { position: static; }
+    :global(html:not(.js)) .nav .container { height: auto; flex-wrap: wrap; padding-top: 12px; padding-bottom: 12px; }
+    :global(html:not(.js)) .nav-links { order: 3; flex-basis: 100%; flex-wrap: wrap; gap: 4px 20px; }
+  }
+  @media (max-width: 600px) {
+    .topbar-contact a:first-child { display: none; }
+    .nav .container { height: 64px; }
+  }
+</style>
