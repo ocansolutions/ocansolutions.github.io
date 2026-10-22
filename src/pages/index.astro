@@ -7,6 +7,11 @@ import About from '../components/About.astro';
 import Model from '../components/Model.astro';
 import Areas from '../components/Areas.astro';
 import Solutions from '../components/Solutions.astro';
+import Process from '../components/Process.astro';
+import Industries from '../components/Industries.astro';
+import Pilot from '../components/Pilot.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
 import { en } from '../i18n/en';
 ---
 <Base meta={en.meta}>
@@ -18,6 +23,10 @@ import { en } from '../i18n/en';
     <Model t={en.model} num="02" />
     <Areas t={en.areas} num="03" />
     <Solutions t={en.solutions} num="04" />
-    {/* How we work, industries, pilot and contact are added in phase 3 (numbers 05-08). */}
+    <Process t={en.process} num="05" />
+    <Industries t={en.industries} num="06" />
+    <Pilot t={en.pilot} num="07" />
+    <Contact t={en.contact} num="08" />
   </main>
+  <Footer t={en.footer} />
 </Base>

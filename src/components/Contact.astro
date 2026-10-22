@@ -1,0 +1,166 @@
+---
+import { Picture } from 'astro:assets';
+import railwayTunnel from '../assets/railway-tunnel.jpg';
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import { site } from '../data/site';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['contact'];
+  num?: string;
+}
+
+const { t, num } = Astro.props;
+const f = t.form;
+const waHref = `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(t.whatsappMessage)}`;
+---
+<section class="block" id="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <div class="contact-bg" aria-hidden="true">
+          <Picture src={railwayTunnel} alt="" formats={['avif', 'webp']} widths={[480, 768]} sizes="(max-width: 900px) 100vw, 500px" />
+        </div>
+        <div class="contact-content">
+          <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
+          <h2 id="contact-title" set:html={rich(t.title)} />
+          <p class="contact-lead" set:html={rich(t.lead)} />
+
+          <ul class="contact-list" role="list">
+            <li>
+              <span class="ci"><Icon name="map-pin" size={20} /></span>
+              <div>
+                <small set:html={rich(`${t.headOffice} · ${site.address.country}`)} />
+                <address>{site.address.street}<br />{site.address.postalCode} {site.address.district}, {site.address.city}</address>
+              </div>
+            </li>
+            <li>
+              <span class="ci"><Icon name="phone" size={20} /></span>
+              <div><small>{t.phone}</small><a href={`tel:${site.phone.tel}`}>{site.phone.display}</a></div>
+            </li>
+            <li>
+              <span class="ci"><Icon name="mail" size={20} /></span>
+              <div><small>{t.email}</small><a href={`mailto:${site.email}`}>{site.email}</a></div>
+            </li>
+          </ul>
+
+          <div class="wa">
+            <a class="btn" href={waHref} target="_blank" rel="noopener"><Icon name="message-circle" size={20} />{t.whatsapp}</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Works without JS as a normal POST to Web3Forms; the page script upgrades it to fetch (see src/scripts/main.ts). */}
+      <form
+        class="rfq"
+        id="rfq"
+        method="POST"
+        action="https://api.web3forms.com/submit"
+        data-contact-form
+        data-sending={f.sending}
+        data-success={f.success}
+        data-error={f.error}
+        data-required={f.required}
+      >
+        <h3>{f.title}</h3>
+        <p class="rfq-lead" set:html={rich(f.lead)} />
+
+        <input type="hidden" name="access_key" value={site.web3formsKey} />
+        <input type="hidden" name="subject" value={f.subject} />
+        <input type="hidden" name="from_name" value={`${site.name} website`} />
+        <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" />
+
+        <div class="fields">
+          <div class="field">
+            <label for="f-name">{f.name} <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-name" name="name" autocomplete="name" placeholder={f.namePlaceholder} required />
+          </div>
+          <div class="field">
+            <label for="f-company">{f.company}</label>
+            <input id="f-company" name="company" autocomplete="organization" placeholder={f.companyPlaceholder} />
+          </div>
+          <div class="field">
+            <label for="f-email">{f.emailLabel} <span class="req" aria-hidden="true">*</span></label>
+            <input id="f-email" type="email" name="email" autocomplete="email" placeholder={f.emailPlaceholder} required />
+          </div>
+          <div class="field">
+            <label for="f-country">{f.country}</label>
+            <input id="f-country" name="country" autocomplete="country-name" placeholder={f.countryPlaceholder} />
+          </div>
+          <div class="field full">
+            <label for="f-area">{f.area}</label>
+            <select id="f-area" name="area">
+              {f.areaOptions.map((option) => <option value={option}>{option}</option>)}
+            </select>
+          </div>
+          <div class="field full">
+            <label for="f-message">{f.message} <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="f-message" name="message" placeholder={f.messagePlaceholder} required></textarea>
+          </div>
+        </div>
+
+        <div class="form-foot">
+          <small>{f.privacy}</small>
+          <button class="btn btn-red" type="submit"><span data-submit-label>{f.submit}</span> <Icon name="send" size={18} /></button>
+        </div>
+        <p class="form-status" role="status" aria-live="polite" data-form-status></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-grid { display: grid; grid-template-columns: .85fr 1.15fr; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+
+  /* ---------- Info panel ---------- */
+  .contact-info { --focus: #ffb3b6; position: relative; overflow: hidden; background: var(--ink); color: var(--white); padding: 50px 44px; }
+  .contact-bg { position: absolute; inset: 0; opacity: .16; pointer-events: none; }
+  .contact-bg :global(picture), .contact-bg :global(img) { display: block; width: 100%; height: 100%; }
+  .contact-bg :global(img) { object-fit: cover; }
+  .contact-content { position: relative; }
+  .contact-info h2 { font-size: 42px; font-weight: 800; }
+  .contact-info h2 :global(em) { font-style: normal; color: var(--red); }
+  .contact-lead { margin-top: 14px; color: var(--muted-light); }
+  .contact-list { list-style: none; margin: 34px 0 0; padding: 0; display: grid; gap: 22px; }
+  .contact-list li { display: flex; gap: 16px; align-items: flex-start; }
+  .ci { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, .25); border-radius: 50%; color: var(--red); }
+  .contact-list small { display: block; font-family: var(--head); font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-light); }
+  .contact-list a, .contact-list address { font-style: normal; font-size: 16.5px; line-height: 1.45; color: var(--white); overflow-wrap: anywhere; }
+  .contact-list a:hover { color: #ffb3b6; }
+  .wa { margin-top: 34px; }
+  .wa .btn { background: #138040; color: var(--white); } /* WhatsApp green, darkened for text contrast */
+  .wa .btn:hover { background: #0f6a35; }
+
+  /* ---------- Form ---------- */
+  .rfq { padding: 50px 48px; background: var(--white); }
+  .rfq h3 { font-size: 30px; font-weight: 800; color: var(--ink); }
+  .rfq-lead { margin: 6px 0 28px; font-size: 16px; color: var(--muted); }
+  .botcheck { display: none; }
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+  .field { display: grid; gap: 6px; align-content: start; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-family: var(--head); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
+  .req { color: var(--red); }
+  input:not([type="hidden"], [type="checkbox"]), select, textarea { width: 100%; padding: 12px 14px; font: inherit; font-size: 16px; color: var(--ink); background: #fbfbfb; border: 1px solid #cfd3d9; border-radius: 4px; transition: border-color .2s, background .2s; }
+  input:focus, select:focus, textarea:focus { border-color: var(--ink); background: var(--white); }
+  input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--red); background: #fffafa; }
+  textarea { min-height: 120px; resize: vertical; }
+  .form-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; margin-top: 24px; }
+  .form-foot small { max-width: 300px; font-size: 13.5px; color: var(--muted); }
+  .form-foot .btn:disabled { opacity: .7; cursor: progress; }
+  .form-status { margin-top: 18px; padding: 14px 16px; border-radius: 4px; font-size: 15px; }
+  .form-status:empty { margin: 0; padding: 0; }
+  .form-status[data-state="success"] { background: #edf8f1; color: #14632f; }
+  .form-status[data-state="error"] { background: #fdeced; color: #8f1a21; }
+
+  @media (max-width: 900px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .contact-info, .rfq { padding: 36px 22px; }
+    .contact-info h2 { font-size: 36px; }
+    .fields { grid-template-columns: 1fr; }
+    .form-foot .btn { width: 100%; }
+  }
+</style>

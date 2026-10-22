@@ -13,7 +13,7 @@ const { t, num } = Astro.props;
 <section class="block" id="about" aria-labelledby="about-title">
   <div class="container">
     <div class="about-grid">
-      <div>
+      <div class="reveal">
         <div class="sec-head about-head">
           <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
           <h2 id="about-title" set:html={rich(t.title)} />
@@ -22,7 +22,7 @@ const { t, num } = Astro.props;
           {t.paragraphs.map((paragraph) => <p set:html={rich(paragraph)} />)}
         </div>
       </div>
-      <figure class="quote">
+      <figure class="quote reveal">
         <blockquote><p set:html={rich(t.quote.text)} /></blockquote>
         <figcaption>
           <span class="quote-author">{t.quote.author}</span>
@@ -31,7 +31,7 @@ const { t, num } = Astro.props;
       </figure>
     </div>
 
-    <ul class="pillars" role="list">
+    <ul class="pillars reveal" role="list">
       {t.pillars.map((pillar) => (
         <li class="pillar">
           <div class="pillar-icon"><Icon name={pillar.icon} size={24} /></div>

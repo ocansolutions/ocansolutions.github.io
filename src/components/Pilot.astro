@@ -1,0 +1,153 @@
+---
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['pilot'];
+  num?: string;
+}
+
+const { t, num } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<section class="block paper" id="pilot" aria-labelledby="pilot-title">
+  <div class="container">
+    <div class="pilot-top">
+      <div class="sec-head reveal">
+        <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
+        <h2 id="pilot-title" set:html={rich(t.title)} />
+        <p set:html={rich(t.lead)} />
+      </div>
+      <a href="#contact" class="btn btn-dark reveal">{t.cta} <Icon name="arrow-right" size={18} /></a>
+    </div>
+
+    <ol class="pilot-steps reveal" role="list">
+      {t.steps.map((step, i) => (
+        <li class="pstep">
+          <span class="pstep-num">{pad(i + 1)}</span>
+          <Icon name={step.icon} size={30} />
+          <h3>{step.title}</h3>
+          <p set:html={rich(step.text)} />
+        </li>
+      ))}
+    </ol>
+
+    <div class="pilot-bottom reveal">
+      <div class="why-pilot">
+        <h3 id="why-pilot-title">{t.whyTitle}</h3>
+        <ul class="why-list" role="list" aria-labelledby="why-pilot-title">
+          {t.why.map((item) => (
+            <li>
+              <Icon name={item.icon} size={24} />
+              <div>
+                <h4>{item.title}</h4>
+                <p set:html={rich(item.text)} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="scope">
+        <Icon class="scope-deco" name="crosshair" size={170} />
+        <h3 id="scope-title">{t.scopesTitle}</h3>
+        <ul role="list" aria-labelledby="scope-title">
+          {t.scopes.map((item) => (
+            <li>
+              <Icon name={item.icon} size={22} />
+              <div>
+                <h4>{item.title}</h4>
+                <p set:html={rich(item.text)} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="commit reveal">
+      <h3 id="commit-title">{t.commitmentTitle}</h3>
+      <ul class="commit-list" role="list" aria-labelledby="commit-title">
+        {t.commitments.map((item) => (
+          <li>
+            <Icon name={item.icon} size={28} />
+            <div>
+              <h4>{item.title}</h4>
+              <p set:html={rich(item.text)} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="pilot-cta reveal">
+      <a href="#contact" class="btn btn-red">{t.cta} <Icon name="arrow-right" size={18} /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pilot-top { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end; margin-bottom: 52px; }
+  .pilot-top .sec-head { margin-bottom: 0; }
+
+  .pilot-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .pstep { padding: 26px 20px 24px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); }
+  .pstep-num { display: inline-block; padding: 3px 10px; background: var(--red); color: var(--white); font-family: var(--head); font-weight: 800; font-size: 15px; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
+  .pstep > :global(svg) { display: block; margin: 18px 0 12px; color: var(--ink); }
+  .pstep h3 { font-size: 19px; font-weight: 700; color: var(--ink); }
+  .pstep p { margin-top: 6px; font-size: 14.5px; line-height: 1.45; color: var(--muted); }
+
+  .pilot-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 22px; }
+  .why-pilot, .scope { padding: 32px; border-radius: var(--radius); }
+  .why-pilot h3, .scope h3 { margin-bottom: 20px; font-size: 24px; font-weight: 700; }
+  .why-pilot li h4, .scope li h4 { font-size: 17px; font-weight: 700; letter-spacing: .04em; line-height: 1.2; }
+
+  .why-pilot { --focus: #ffb3b6; background: var(--ink); color: var(--white); }
+  .why-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; }
+  .why-list li { display: flex; gap: 12px; }
+  .why-list li > :global(svg) { margin-top: 2px; color: var(--red); }
+  .why-list p { margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--muted-light); }
+
+  .scope { position: relative; overflow: hidden; background: var(--red); color: var(--white); }
+  .scope > :global(.scope-deco) { position: absolute; right: -24px; bottom: -34px; color: rgba(255, 255, 255, .1); pointer-events: none; }
+  .scope ul { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .scope li { display: flex; gap: 14px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, .2); }
+  .scope li:last-child { padding-bottom: 0; border-bottom: 0; }
+  .scope li > :global(svg) { margin-top: 2px; }
+  .scope li h4 { font-size: 17.5px; }
+  .scope li p { font-size: 14.5px; opacity: .88; }
+
+  .commit { margin-top: 22px; background: var(--white); border-top: 4px solid var(--red); box-shadow: var(--shadow); }
+  .commit h3 { padding: 26px 32px 22px; font-size: 24px; font-weight: 700; color: var(--ink); }
+  .commit-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); }
+  .commit-list li { padding: 24px 24px 28px; }
+  .commit-list li + li { border-left: 1px solid var(--line); }
+  .commit-list li > :global(svg) { display: block; margin-bottom: 12px; color: var(--red); }
+  .commit-list h4 { font-size: 17px; font-weight: 700; letter-spacing: .04em; line-height: 1.2; color: var(--ink); }
+  .commit-list p { margin-top: 4px; font-size: 14.5px; line-height: 1.4; color: var(--muted); }
+
+  .pilot-cta { margin-top: 40px; text-align: center; }
+
+  @media (max-width: 1080px) {
+    .pilot-steps { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .pilot-top { grid-template-columns: 1fr; gap: 24px; align-items: start; }
+    .pilot-top .btn { justify-self: start; }
+    .pilot-bottom { grid-template-columns: 1fr; }
+    .commit-list { grid-template-columns: 1fr; }
+    .commit-list li { display: flex; gap: 16px; align-items: flex-start; padding: 20px 24px; }
+    .commit-list li + li { border-left: 0; border-top: 1px solid var(--line); }
+    .commit-list li > :global(svg) { margin: 2px 0 0; }
+  }
+  @media (max-width: 600px) {
+    .pilot-steps { grid-template-columns: 1fr 1fr; }
+    .why-pilot, .scope { padding: 28px 22px; }
+    .why-list { grid-template-columns: 1fr; }
+    .commit h3 { padding: 22px 22px 18px; }
+    .commit-list li { padding: 18px 22px; }
+  }
+  @media (max-width: 440px) {
+    .pilot-steps { grid-template-columns: 1fr; }
+  }
+</style>

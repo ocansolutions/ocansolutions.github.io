@@ -29,10 +29,10 @@ const tabs = t.tabs.map((tab) => {
   return { ...tab, photo };
 });
 ---
-{/* Without JS the tab bar stays hidden and all panels are stacked. The script at the bottom sets `data-ready` on the section, which switches to tabs. */}
+{/* Without JS the tab bar stays hidden and all panels are stacked. The page script (src/scripts/main.ts) sets `data-ready` on this section, which switches to tabs. */}
 <section class="block paper solutions" id="solutions" aria-labelledby="solutions-title" data-tabs>
   <div class="container">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
       <h2 id="solutions-title" set:html={rich(t.title)} />
     </div>
@@ -94,41 +94,6 @@ const tabs = t.tabs.map((tab) => {
     ))}
   </div>
 </section>
-
-<script>
-  // Tabs: click, ArrowLeft/ArrowRight (wraps), Home/End, roving tabindex.
-  const root = document.querySelector<HTMLElement>('[data-tabs]');
-  if (root) {
-    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
-
-    const select = (index: number, focus = false) => {
-      tabs.forEach((tab, i) => {
-        const on = i === index;
-        tab.setAttribute('aria-selected', String(on));
-        tab.tabIndex = on ? 0 : -1;
-        document.getElementById(tab.getAttribute('aria-controls') ?? '')?.classList.toggle('is-active', on);
-      });
-      if (focus) tabs[index]?.focus();
-    };
-
-    tabs.forEach((tab, i) => {
-      tab.addEventListener('click', () => select(i));
-      tab.addEventListener('keydown', (event) => {
-        const last = tabs.length - 1;
-        let next: number;
-        if (event.key === 'ArrowRight') next = i === last ? 0 : i + 1;
-        else if (event.key === 'ArrowLeft') next = i === 0 ? last : i - 1;
-        else if (event.key === 'Home') next = 0;
-        else if (event.key === 'End') next = last;
-        else return;
-        event.preventDefault();
-        select(next, true);
-      });
-    });
-
-    root.dataset.ready = '';
-  }
-</script>
 
 <style>
   .tabs { display: none; border-bottom: 2px solid var(--line); margin-bottom: 44px; }

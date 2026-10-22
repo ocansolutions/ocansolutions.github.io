@@ -26,5 +26,8 @@ const { meta } = Astro.props;
   <body>
     <a class="skip-link" href="#main">{meta.skipLink}</a>
     <slot />
+    <script>
+      import '../scripts/main';
+    </script>
   </body>
 </html>

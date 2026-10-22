@@ -1,0 +1,67 @@
+---
+import Logo from './Logo.astro';
+import { rich } from '../lib/rich';
+import { site } from '../data/site';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['footer'];
+}
+
+const { t } = Astro.props;
+const year = new Date().getFullYear(); // set at build time
+---
+<footer class="footer">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <Logo href="#top" />
+        <p>{t.tagline}</p>
+      </div>
+      <div>
+        <h3>{t.solutionsTitle}</h3>
+        <ul role="list">
+          {t.solutionsLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h3>{t.companyTitle}</h3>
+        <ul role="list">
+          {t.companyLinks.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h3>{t.contactTitle}</h3>
+        <ul role="list">
+          <li set:html={rich(`${site.address.district}, ${site.address.city}, ${site.address.country}`)} />
+          <li><a href={`tel:${site.phone.tel}`}>{site.phone.display}</a></li>
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© {year} {t.rights}</span>
+      <span class="slogan" set:html={rich(t.slogan)} />
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer { --focus: #ffb3b6; padding: 70px 0 0; background: #0b0c0d; color: var(--muted-light); font-size: 15px; }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 40px; padding-bottom: 50px; }
+  .foot-grid p { max-width: 320px; margin-top: 18px; }
+  .footer h3 { margin-bottom: 18px; font-size: 16px; font-weight: 700; letter-spacing: .14em; color: var(--white); }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .footer a:hover { color: var(--white); }
+  .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; padding: 22px 0; border-top: 1px solid rgba(255, 255, 255, .08); font-size: 13.5px; }
+  .slogan { font-family: var(--head); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--white); }
+  .slogan :global(em) { font-style: normal; color: var(--red); }
+
+  @media (max-width: 900px) {
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .footer { padding-top: 56px; }
+    .foot-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>

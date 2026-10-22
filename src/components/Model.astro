@@ -12,13 +12,13 @@ const { t, num } = Astro.props;
 ---
 <section class="block paper" id="model" aria-labelledby="model-title">
   <div class="container">
-    <div class="sec-head model-head">
+    <div class="sec-head model-head reveal">
       <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
       <h2 id="model-title" set:html={rich(t.title)} />
       <p set:html={rich(t.lead)} />
     </div>
 
-    <ul class="core" role="list">
+    <ul class="core reveal" role="list">
       {t.pillars.map((pillar) => (
         <li class="core-item">
           <div class="core-icon"><Icon name={pillar.icon} size={28} /></div>
@@ -28,8 +28,8 @@ const { t, num } = Astro.props;
       ))}
     </ul>
 
-    <h3 class="why-title" id="why-title">{t.whyTitle}</h3>
-    <ul class="why" role="list" aria-labelledby="why-title">
+    <h3 class="why-title reveal" id="why-title">{t.whyTitle}</h3>
+    <ul class="why reveal" role="list" aria-labelledby="why-title">
       {t.why.map((item) => (
         <li class="why-item">
           <Icon name={item.icon} size={30} />

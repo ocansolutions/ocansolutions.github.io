@@ -1,0 +1,97 @@
+---
+import Icon from './Icon.astro';
+import { rich } from '../lib/rich';
+import { buildMap, MAP_VIEWBOX } from '../lib/map';
+import type { Dict } from '../i18n/en';
+
+interface Props {
+  t: Dict['industries'];
+  num?: string;
+}
+
+const { t, num } = Astro.props;
+const map = buildMap(); // built once at build time; the browser gets plain SVG
+---
+<section class="block" id="industries" aria-labelledby="industries-title">
+  <div class="container">
+    <div class="ind-grid">
+      <div>
+        <div class="sec-head ind-head reveal">
+          <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
+          <h2 id="industries-title" set:html={rich(t.title)} />
+        </div>
+        <ul class="industries reveal" role="list">
+          {t.items.map((item) => (
+            <li class="industry">
+              <div class="industry-icon"><Icon name={item.icon} size={22} /></div>
+              <div>
+                <h3>{item.title}</h3>
+                <p set:html={rich(item.text)} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="map-wrap reveal">
+        <svg viewBox={MAP_VIEWBOX} role="img" aria-label={t.mapAlt} focusable="false">
+          <path class="dots dots-africa" d={map.africa} />
+          <path class="dots dots-turkey" d={map.turkey} />
+          <g>
+            {map.arcs.map((arc) => <path class="arc" d={arc.d} style={`animation-delay:${arc.delay}s`} />)}
+          </g>
+          <g>
+            {map.pins.map((pin) => (
+              <>
+                <circle class="pulse" cx={pin.x} cy={pin.y} r="1.1" style={`animation-delay:${pin.delay}s`} />
+                <circle class="pin" cx={pin.x} cy={pin.y} r=".95" />
+              </>
+            ))}
+          </g>
+          <circle class="pulse hub-pulse" cx={map.hub.x} cy={map.hub.y} r="1.6" />
+          <circle class="hub" cx={map.hub.x} cy={map.hub.y} r="1.2" />
+        </svg>
+        <ul class="map-legend" role="list">
+          <li><i class="legend-dot hub-dot" aria-hidden="true"></i><span set:html={rich(t.legendHub)} /></li>
+          <li><i class="legend-dot ops-dot" aria-hidden="true"></i><span set:html={rich(t.legendOps)} /></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ind-grid { display: grid; grid-template-columns: .95fr 1.05fr; gap: 64px; align-items: center; }
+  .sec-head.ind-head { margin-bottom: 28px; }
+
+  .industries { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 12px; }
+  .industry { display: flex; align-items: center; gap: 18px; padding: 16px 20px; border: 1px solid var(--line); border-radius: var(--radius); transition: border-color .2s, background .2s; }
+  .industry:hover { border-color: var(--red); background: #fffafa; }
+  .industry-icon { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--white); }
+  .industry h3 { font-size: 20px; font-weight: 700; letter-spacing: .03em; line-height: 1.1; color: var(--ink); }
+  .industry p { font-size: 15px; color: var(--muted); }
+
+  .map-wrap svg { display: block; width: 100%; height: auto; }
+  .dots { fill: none; stroke-width: .92; stroke-linecap: round; }
+  .dots-africa { stroke: #c5c9cf; }
+  .dots-turkey { stroke: var(--ink); }
+  .arc { fill: none; stroke: var(--red); stroke-width: .35; stroke-dasharray: 1.2 1; animation: dash 3s linear infinite; }
+  .pin { fill: var(--red); stroke: var(--white); stroke-width: .35; }
+  .hub { fill: var(--red); stroke: var(--white); stroke-width: .4; }
+  .pulse { fill: var(--red); opacity: .35; transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
+  .hub-pulse { fill: var(--ink); }
+  @keyframes dash { to { stroke-dashoffset: -11; } }
+  @keyframes pulse { 0% { transform: scale(.6); opacity: .5; } 100% { transform: scale(2.6); opacity: 0; } }
+
+  .map-legend { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 26px; font-size: 14.5px; color: var(--muted); }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; transform: translateY(1px); }
+  .hub-dot { background: var(--ink); }
+  .ops-dot { background: var(--red); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .arc, .pulse { animation: none; }
+  }
+  @media (max-width: 900px) {
+    .ind-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+</style>

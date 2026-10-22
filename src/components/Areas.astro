@@ -14,13 +14,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
 {/* White (the mockup had paper) so it doesn't sit right after the paper Model section. */}
 <section class="block" id="areas" aria-labelledby="areas-title">
   <div class="container">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <div class="eyebrow">{num && <span class="num">{num}</span>}{t.eyebrow}</div>
       <h2 id="areas-title" set:html={rich(t.title)} />
       <p set:html={rich(t.lead)} />
     </div>
 
-    <ul class="areas" role="list">
+    <ul class="areas reveal" role="list">
       {t.items.map((item, i) => (
         <li class="area">
           <div class="area-top">
@@ -35,7 +35,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       ))}
     </ul>
 
-    <div class="areas-quote">
+    <div class="areas-quote reveal">
       <p set:html={rich(t.quote)} />
     </div>
   </div>
