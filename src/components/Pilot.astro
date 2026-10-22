@@ -115,7 +115,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
   .scope li:last-child { padding-bottom: 0; border-bottom: 0; }
   .scope li > :global(svg) { margin-top: 2px; }
   .scope li h4 { font-size: 17.5px; }
-  .scope li p { font-size: 14.5px; opacity: .88; }
+  .scope li p { font-size: 14.5px; } /* full white: 5:1 on the red, .88 opacity dropped it to 4:1 */
 
   .commit { margin-top: 22px; background: var(--white); border-top: 4px solid var(--red); box-shadow: var(--shadow); }
   .commit h3 { padding: 26px 32px 22px; font-size: 24px; font-weight: 700; color: var(--ink); }

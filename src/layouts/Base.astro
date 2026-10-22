@@ -1,4 +1,5 @@
 ---
+import { getImage } from 'astro:assets';
 import '@fontsource/barlow/400.css';
 import '@fontsource/barlow/500.css';
 import '@fontsource/barlow/600.css';
@@ -6,6 +7,8 @@ import '@fontsource/barlow-condensed/600.css';
 import '@fontsource/barlow-condensed/700.css';
 import '@fontsource/barlow-condensed/800.css';
 import '../styles/global.css';
+import heroImage from '../assets/hero-mine.jpg';
+import { site } from '../data/site';
 import type { Dict } from '../i18n/en';
 
 interface Props {
@@ -13,6 +16,35 @@ interface Props {
 }
 
 const { meta } = Astro.props;
+
+// Absolute URLs come from `site` in astro.config.mjs, so switching to the real domain (phase 5) needs no change here.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// Social preview: a landscape crop of the hero photo. Astro never upscales, so it is as wide as the source (940px).
+const ogImage = await getImage({ src: heroImage, width: 940, height: 494, fit: 'cover', format: 'jpg', quality: 80 });
+const ogImageUrl = new URL(ogImage.src, Astro.site).href;
+
+const { address } = site;
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: site.legalName,
+  alternateName: site.name,
+  url: new URL('/', Astro.site).href,
+  description: meta.description,
+  email: site.email,
+  telephone: site.phone.tel,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: address.street,
+    postalCode: address.postalCode,
+    addressLocality: address.district,
+    addressRegion: address.city,
+    addressCountry: address.countryCode,
+  },
+};
+// `<` is escaped so the JSON can never close the <script> tag.
+const organizationJson = JSON.stringify(organization).replace(/</g, '\\u003c');
 ---
 <!doctype html>
 <html lang={meta.lang}>
@@ -21,6 +53,27 @@ const { meta } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
+    <meta name="theme-color" content="#121315" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content={String(ogImage.options.width)} />
+    <meta property="og:image:height" content={String(ogImage.options.height)} />
+    <meta property="og:image:alt" content={meta.ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={meta.ogImageAlt} />
+
+    <script type="application/ld+json" is:inline set:html={organizationJson} />
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>

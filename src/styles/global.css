@@ -3,6 +3,7 @@
 :root {
   --red: #d7262e;
   --red-dark: #a81a21;
+  --red-on-dark: #f0454d; /* red for small text on dark surfaces: 5:1 on ink, where --red is only 3.7:1 */
   --ink: #121315;
   --ink-2: #1b1d21;
   --steel: #2a2d33;
@@ -57,6 +58,7 @@ section.block { padding: 110px 0; }
 .eyebrow .num { display: inline-grid; place-items: center; background: var(--red); color: var(--white); font-size: 13px; padding: 3px 8px; letter-spacing: .04em; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); }
 .sec-head h2 { font-size: clamp(36px, 4.4vw, 56px); font-weight: 800; color: var(--ink); }
 .dark .sec-head h2 { color: var(--white); }
+.dark .eyebrow { color: var(--red-on-dark); }
 .sec-head h2 em { font-style: normal; color: var(--red); }
 .sec-head p { margin-top: 18px; font-size: 18.5px; color: var(--muted); }
 .dark .sec-head p { color: var(--muted-light); }
