@@ -2,6 +2,10 @@
 // Everything here is an enhancement: with JS off the page is fully readable and the form posts normally.
 // Copy shown by the script (form messages, nav labels) comes from data-* attributes rendered from en.ts.
 
+// First thing: tell the inline <head> script that this module runs. Without this flag it removes the
+// `js` class at DOMContentLoaded and the page falls back to the no-JS layout (see Base.astro).
+document.documentElement.classList.add('js-ready');
+
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasObserver = 'IntersectionObserver' in window;
 
@@ -28,9 +32,13 @@ function initNav(): void {
       burger.focus();
     }
   });
-  matchMedia('(min-width: 901px)').addEventListener('change', (event) => {
+  // MediaQueryList.addEventListener is Safari 14+; older engines only have addListener.
+  const wide = matchMedia('(min-width: 901px)');
+  const closeOnWide = (event: MediaQueryListEvent): void => {
     if (event.matches) setOpen(false);
-  });
+  };
+  if ('addEventListener' in wide) wide.addEventListener('change', closeOnWide);
+  else (wide as MediaQueryList).addListener(closeOnWide);
 }
 
 // ---------- Solution tabs ----------
@@ -70,10 +78,14 @@ function initTabs(): void {
 }
 
 // ---------- Reveal on scroll ----------
+const showAllReveals = (): void => {
+  document.querySelectorAll('.reveal').forEach((item) => item.classList.add('in'));
+};
+
 function initReveal(): void {
   const items = document.querySelectorAll<HTMLElement>('.reveal');
   if (!hasObserver || reduceMotion) {
-    items.forEach((item) => item.classList.add('in'));
+    showAllReveals();
     return;
   }
   const observer = new IntersectionObserver(
@@ -191,8 +203,19 @@ function initForm(): void {
   });
 }
 
-initNav();
-initTabs();
-initReveal();
-initCounters();
-initForm();
+// Each feature runs on its own, so one failing (e.g. a missing browser API) can't stop the others.
+// If reveal fails, everything is shown rather than left hidden.
+const run = (init: () => void, fallback?: () => void): void => {
+  try {
+    init();
+  } catch (error) {
+    console.error(error);
+    fallback?.();
+  }
+};
+
+run(initNav);
+run(initTabs);
+run(initReveal, showAllReveals);
+run(initCounters);
+run(initForm);

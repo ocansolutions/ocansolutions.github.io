@@ -74,7 +74,18 @@ const organizationJson = JSON.stringify(organization).replace(/</g, '\\u003c');
     <meta name="twitter:image:alt" content={meta.ogImageAlt} />
 
     <script type="application/ld+json" is:inline set:html={organizationJson} />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      // `js` turns on the mobile menu dropdown and the reveal animation. Set it only where the page's module
+      // script can run, and drop it again if that script never starts (old browsers, KaiOS, Opera Mini, a
+      // syntax error): the page then falls back to the plain layout where everything is visible.
+      (function (root) {
+        if (!('noModule' in HTMLScriptElement.prototype)) return;
+        root.classList.add('js');
+        document.addEventListener('DOMContentLoaded', function () {
+          if (!root.classList.contains('js-ready')) root.classList.remove('js');
+        });
+      })(document.documentElement);
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">{meta.skipLink}</a>

@@ -70,6 +70,10 @@ section.block { padding: 110px 0; }
   html { scroll-behavior: auto; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
 }
+/* Printing / "Save as PDF": sections the visitor hasn't scrolled to would otherwise print blank */
+@media print {
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 600px) {

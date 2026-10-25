@@ -151,6 +151,12 @@ const tabs = t.tabs.map((tab) => ({ ...tab, photo: photos[tab.id] }));
   @media (prefers-reduced-motion: reduce) {
     .tab, .tab::after { transition: none; }
   }
+  /* Print every solution, not just the selected tab */
+  @media print {
+    .solutions[data-ready] .tabs { display: none; }
+    .solutions[data-ready] .panel:not(.is-active) { display: grid; }
+    .solutions[data-ready] .panel + .panel { margin-top: 40px; }
+  }
   @media (max-width: 900px) {
     .solutions[data-ready] .tabs { grid-template-columns: repeat(3, 1fr); }
     .panel { grid-template-columns: 1fr; gap: 40px; }
