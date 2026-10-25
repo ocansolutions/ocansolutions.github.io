@@ -14,20 +14,19 @@ interface Props {
 }
 
 const { t, num } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
 
 // Photo per tab, keyed by the tab `id` in en.ts. Widths never exceed the file's own width;
 // hero-mine reuses the hero's widths so the optimizer doesn't generate it twice.
-const photos: Record<string, { src: ImageMetadata; widths: number[]; position?: string }> = {
+// Tabs without a photo get a dark panel with their number (same numbering as the Areas cards).
+type Photo = { src: ImageMetadata; widths: number[]; position?: string };
+const photos: Partial<Record<string, Photo>> = {
   polyurethane: { src: plantNight, widths: [480, 768, 900] },
   equipment: { src: heroMine, widths: [480, 768, 940], position: '50% 80%' },
   railway: { src: railwayTunnel, widths: [480, 768, 920] },
 };
 
-const tabs = t.tabs.map((tab) => {
-  const photo = photos[tab.id];
-  if (!photo) throw new Error(`Solutions.astro: no photo mapped for tab "${tab.id}"`);
-  return { ...tab, photo };
-});
+const tabs = t.tabs.map((tab) => ({ ...tab, photo: photos[tab.id] }));
 ---
 {/* Without JS the tab bar stays hidden and all panels are stacked. The page script (src/scripts/main.ts) sets `data-ready` on this section, which switches to tabs. */}
 <section class="block paper solutions" id="solutions" aria-labelledby="solutions-title" data-tabs>
@@ -48,22 +47,29 @@ const tabs = t.tabs.map((tab) => {
           aria-selected={i === 0 ? 'true' : 'false'}
           tabindex={i === 0 ? 0 : -1}
         >
-          <Icon name={tab.icon} size={20} />{tab.tab}
+          <Icon name={tab.icon} size={24} /><span>{tab.tab}</span>
         </button>
       ))}
     </div>
 
     {tabs.map((tab, i) => (
       <div class:list={['panel', { 'is-active': i === 0 }]} role="tabpanel" id={`panel-${tab.id}`} aria-labelledby={`tab-${tab.id}`}>
-        <div class="panel-media">
-          <Picture
-            src={tab.photo.src}
-            alt={tab.imageAlt}
-            formats={['avif', 'webp']}
-            widths={tab.photo.widths}
-            sizes="(max-width: 900px) 100vw, 500px"
-            style={tab.photo.position ? `object-position: ${tab.photo.position}` : undefined}
-          />
+        <div class:list={['panel-media', { 'no-photo': !tab.photo }]}>
+          {tab.photo ? (
+            <Picture
+              src={tab.photo.src}
+              alt={tab.imageAlt ?? ''}
+              formats={['avif', 'webp']}
+              widths={tab.photo.widths}
+              sizes="(max-width: 900px) 100vw, 500px"
+              style={tab.photo.position ? `object-position: ${tab.photo.position}` : undefined}
+            />
+          ) : (
+            <div class="panel-mark" aria-hidden="true">
+              <span class="panel-num">{pad(i + 1)}</span>
+              <Icon name={tab.icon} size={170} />
+            </div>
+          )}
           <p class="panel-caption" set:html={rich(tab.caption)} />
         </div>
         <div class="panel-body">
@@ -71,15 +77,18 @@ const tabs = t.tabs.map((tab) => {
           <p set:html={rich(tab.text)} />
           <h4 class="panel-label">{tab.listTitle}</h4>
           <ul class="chips" role="list">
-            {tab.items.map((item) => (
-              <li class="chip">
-                <Icon name={item.icon} size={22} />
-                <div>
-                  <span class="chip-title">{item.title}</span>
-                  <span class="chip-text" set:html={rich(item.text)} />
-                </div>
-              </li>
-            ))}
+            {tab.items.map((item) => {
+              const text = 'text' in item ? item.text : undefined;
+              return (
+                <li class:list={['chip', { 'chip-solo': !text }]}>
+                  <Icon name={item.icon} size={22} />
+                  <div>
+                    <span class="chip-title">{item.title}</span>
+                    {text && <span class="chip-text" set:html={rich(text)} />}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
           {tab.tags && tab.tagsTitle && (
             <>
@@ -96,10 +105,12 @@ const tabs = t.tabs.map((tab) => {
 </section>
 
 <style>
-  .tabs { display: none; border-bottom: 2px solid var(--line); margin-bottom: 44px; }
-  .solutions[data-ready] .tabs { display: flex; }
-  .tab { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; background: none; border: 0; cursor: pointer; font-family: var(--head); font-weight: 700; font-size: 19px; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; color: var(--muted); transition: color .2s; }
-  .tab:hover, .tab[aria-selected="true"] { color: var(--ink); }
+  /* ---------- Tab bar: six equal cells (one row on desktop, 3x2 below 900px), icon above the label ---------- */
+  .tabs { display: none; margin-bottom: 44px; }
+  .solutions[data-ready] .tabs { display: grid; grid-template-columns: repeat(6, 1fr); }
+  .tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; min-width: 0; padding: 18px 10px 16px; background: none; border: 0; border-bottom: 2px solid var(--line); cursor: pointer; font-family: var(--head); font-weight: 700; font-size: 16.5px; letter-spacing: .05em; line-height: 1.15; text-align: center; text-transform: uppercase; color: var(--muted); transition: color .2s, background .2s; }
+  .tab:hover { color: var(--ink); background: rgba(18, 19, 21, .03); }
+  .tab[aria-selected="true"] { color: var(--ink); background: var(--white); }
   .tab::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; background: var(--red); transform: scaleX(0); transition: transform .25s ease; }
   .tab[aria-selected="true"]::after { transform: scaleX(1); }
   .tab[aria-selected="true"] :global(svg) { color: var(--red); }
@@ -115,14 +126,22 @@ const tabs = t.tabs.map((tab) => {
   .panel-caption { position: absolute; left: 28px; right: 28px; bottom: 26px; z-index: 2; color: var(--white); font-family: var(--head); font-weight: 600; font-size: 22px; line-height: 1.15; text-transform: uppercase; }
   .panel-caption::before { content: ""; display: block; width: 40px; height: 3px; background: var(--red); margin-bottom: 14px; }
 
+  /* No photo: big red number, faded icon and the hero's slanted red bar */
+  .panel-mark { position: absolute; inset: 0; color: rgba(255, 255, 255, .13); }
+  .panel-mark::before { content: ""; position: absolute; top: 0; bottom: 0; right: 18%; width: 12%; background: var(--red); clip-path: polygon(calc(100% - 8px) 0, 100% 0, 8px 100%, 0 100%); }
+  .panel-mark > :global(svg) { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -62%); }
+  .panel-num { position: absolute; top: 22px; left: 28px; font-family: var(--head); font-weight: 800; font-size: 92px; line-height: 1; color: var(--red); }
+
   .panel-body h3 { font-size: 36px; font-weight: 800; color: var(--ink); }
   .panel-body > p { margin-top: 14px; font-size: 17.5px; color: var(--muted); }
   .panel-label { margin: 30px 0 14px; font-size: 14px; font-weight: 700; letter-spacing: .16em; color: var(--red); }
 
   .chips { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .chip { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); transition: border-color .2s; }
+  .chip.chip-solo { align-items: center; }
   .chip:hover { border-color: var(--red); }
   .chip > :global(svg) { margin-top: 2px; color: var(--red); }
+  .chip.chip-solo > :global(svg) { margin-top: 0; }
   .chip-title { display: block; font-family: var(--head); font-weight: 700; font-size: 17px; letter-spacing: .03em; line-height: 1.15; text-transform: uppercase; color: var(--ink); }
   .chip-text { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--muted); }
 
@@ -133,14 +152,16 @@ const tabs = t.tabs.map((tab) => {
     .tab, .tab::after { transition: none; }
   }
   @media (max-width: 900px) {
+    .solutions[data-ready] .tabs { grid-template-columns: repeat(3, 1fr); }
     .panel { grid-template-columns: 1fr; gap: 40px; }
     .solutions:not([data-ready]) .panel + .panel { margin-top: 56px; padding-top: 56px; }
     .panel-media { height: 300px; }
+    .panel-num { font-size: 72px; }
+    .panel-mark > :global(svg) { width: 130px; height: 130px; }
   }
   @media (max-width: 600px) {
-    /* Three equal tabs, label under the icon, so none is hidden off-screen */
-    .solutions[data-ready] .tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; margin-bottom: 32px; }
-    .tab { flex-direction: column; justify-content: flex-start; gap: 6px; min-width: 0; padding: 12px 2px 14px; font-size: 14.5px; letter-spacing: .04em; line-height: 1.15; text-align: center; white-space: normal; }
+    .solutions[data-ready] .tabs { margin-bottom: 32px; }
+    .tab { gap: 6px; padding: 12px 4px 14px; font-size: 14px; letter-spacing: .03em; }
     .panel-body h3 { font-size: 30px; }
     .chips { grid-template-columns: 1fr; }
   }

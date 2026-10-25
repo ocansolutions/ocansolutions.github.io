@@ -1,4 +1,4 @@
-// Dotted map of Africa + Türkiye, generated at build time: the page ships two small <path>s and no map JS.
+// Dotted map of Africa + Turkey, generated at build time: the page ships two small <path>s and no map JS.
 // Outlines are rough [lon, lat] polygons. A dot is drawn at every grid point that falls inside one,
 // as a zero-length subpath (`h0`) that `stroke-linecap: round` turns into a circle.
 

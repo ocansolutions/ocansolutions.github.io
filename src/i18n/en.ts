@@ -8,7 +8,7 @@ export const en = {
     lang: 'en',
     title: 'OCAN | Industrial Sourcing & Solution Partner for Mining and Railway',
     description:
-      'Engineering-based industrial sourcing and solution partner for mining and railway operations in Africa. The right manufacturer, the right product and the right technical solution, from Türkiye and worldwide.',
+      'Engineering-based industrial sourcing and solution partner for mining and railway operations in Africa. The right manufacturer, the right product and the right technical solution, from Turkey and worldwide.',
     ogImageAlt: 'OCAN: engineering-based industrial sourcing for mining and railway',
     skipLink: 'Skip to content',
   },
@@ -35,7 +35,7 @@ export const en = {
     kicker: 'Engineering-based industrial sourcing',
     titleLines: ['One partner.', 'Right manufacturer.', 'Right product.'],
     titleAccent: 'Right solution.',
-    lead: 'OCAN connects mining and railway operations across Africa with qualified manufacturers in Türkiye and worldwide, from technical evaluation to on-site delivery.',
+    lead: 'OCAN connects mining and railway operations across Africa with qualified manufacturers in Turkey and worldwide, from technical evaluation to on-site delivery.',
     ctaPrimary: 'Request a quote',
     ctaSecondary: 'See how we work',
     sectors: [
@@ -60,7 +60,7 @@ export const en = {
     eyebrow: 'Who we are',
     title: 'Industrial sourcing & solution partner for the *mining & railway* industry',
     paragraphs: [
-      'OCAN is an independent industrial sourcing and solution partner serving the mining and railway industry. We help mining companies improve operational efficiency, optimize procurement and secure reliable long-term supply by working with qualified manufacturing partners in Türkiye and internationally.',
+      'OCAN is an independent industrial sourcing and solution partner serving the mining and railway industry. We help mining companies improve operational efficiency, optimize procurement and secure reliable long-term supply by working with qualified manufacturing partners in Turkey and internationally.',
       'Rather than offering our own manufactured products, we identify technical solutions, select the right manufacturers, coordinate the entire supply process and ensure reliable long-term performance.',
       'Our objective is to be a trusted long-term partner by delivering practical solutions, competitive pricing and dependable service.',
     ],
@@ -83,14 +83,14 @@ export const en = {
     title: 'We don’t represent a single manufacturer. *We represent the best solution* for your operation.',
     lead: 'We are not tied to any single manufacturer. Our only focus is your success: the right manufacturer, the right product and the right technical solution for your application.',
     pillars: [
-      { icon: 'scan-search', title: 'Technical sourcing', text: 'Finding the best manufacturers and sources, in Türkiye and globally.' },
+      { icon: 'scan-search', title: 'Technical sourcing', text: 'Finding the best manufacturers and sources, in Turkey and globally.' },
       { icon: 'cog', title: 'Technical solutions', text: 'Identifying the right technical solution for your application.' },
       { icon: 'package-check', title: 'Reliable supply', text: 'Consistent quality and safe, on-time delivery to your site.' },
     ],
     whyTitle: 'Why our business model works',
     why: [
       { icon: 'scale', title: 'Independent solution partner', text: 'We are not tied to any single manufacturer. Our only focus is your success.' },
-      { icon: 'globe', title: 'Flexible manufacturing network', text: 'Access to a wide network of reliable manufacturers in Türkiye and worldwide.' },
+      { icon: 'globe', title: 'Flexible manufacturing network', text: 'Access to a wide network of reliable manufacturers in Turkey and worldwide.' },
       { icon: 'puzzle', title: 'Technical solutions & products', text: 'From standard components to fully customized technical solutions and products.' },
       { icon: 'circle-dollar-sign', title: 'Cost optimization', text: 'We analyze the total cost and deliver the most competitive solution without compromising quality.' },
       { icon: 'shield-check', title: 'Production & quality coordination', text: 'We coordinate production and quality control with our partners at every stage.' },
@@ -116,7 +116,7 @@ export const en = {
     quote: 'We identify the *right manufacturer*, the *right product* and the *right technical solution* for industrial applications.',
   },
 
-  // ── solutions (brochure 05, 06, 07; tabs)
+  // ── solutions (tabs in brochure 04 order; tabs 1-3 = detail pages 05, 06, 07)
   solutions: {
     eyebrow: 'Solutions',
     title: 'Engineered for the *toughest environments*',
@@ -184,6 +184,56 @@ export const en = {
         tagsTitle: 'Track components',
         tags: ['Rail fastening systems', 'Rail clips & pads', 'Fishplates & rail joints', 'Turnouts', 'Crossings & check rails', 'Special trackwork'],
       },
+      // Tabs 4-6 have no detail page in the brochure: items are the brochure 04 bullets,
+      // caption/text reuse brochure 02/03 sentences (also used in `model`). No photo: the panel shows its number instead.
+      {
+        id: 'custom',
+        icon: 'puzzle',
+        tab: 'Custom solutions',
+        title: 'Custom industrial solutions',
+        caption: 'Identifying the right technical solution for your application.',
+        text: 'From standard components to fully customized technical solutions and products.',
+        listTitle: 'What we cover',
+        items: [
+          { icon: 'drafting-compass', title: 'Engineering coordination' },
+          { icon: 'box', title: 'Mold development' },
+          { icon: 'flame', title: 'Steel fabrication' },
+          { icon: 'layers', title: 'Polyurethane casting' },
+          { icon: 'settings-2', title: 'Product adaptation' },
+        ],
+      },
+      {
+        id: 'sourcing',
+        icon: 'globe',
+        tab: 'Technical sourcing',
+        title: 'Technical sourcing',
+        caption: 'Finding the best manufacturers and sources, in Turkey and globally.',
+        text: 'Access to a wide network of reliable manufacturers in Turkey and worldwide.',
+        listTitle: 'What we cover',
+        items: [
+          { icon: 'factory', title: 'Qualified manufacturers' },
+          { icon: 'clipboard-check', title: 'Product evaluation' },
+          { icon: 'badge-check', title: 'Supplier selection' },
+          { icon: 'circle-dollar-sign', title: 'Cost optimization' },
+          { icon: 'globe', title: 'Global supply network' },
+        ],
+      },
+      {
+        id: 'services',
+        icon: 'hard-hat',
+        tab: 'Technical services',
+        title: 'Technical services',
+        caption: 'From installation to after-sales support.',
+        text: 'We support you from selection to installation and throughout the product life cycle.',
+        listTitle: 'What we cover',
+        items: [
+          { icon: 'map-pin', title: 'Site assessments' },
+          { icon: 'list-checks', title: 'Product selection' },
+          { icon: 'flask-conical', title: 'Trial projects' },
+          { icon: 'headset', title: 'Technical support' },
+          { icon: 'calendar-check', title: 'Long-term supply planning' },
+        ],
+      },
     ],
   },
 
@@ -198,7 +248,7 @@ export const en = {
       { icon: 'clipboard-list', title: 'Review the current application', text: 'We review the existing component or equipment: dimensions, material, service life and performance history.' },
       { icon: 'map-pin', title: 'Analyze operating conditions', text: 'Where required, we visit your site to assess the environment, wear mechanisms and actual operating conditions.' },
       { icon: 'scan-search', title: 'Evaluate technical solutions', text: 'We compare technical options and identify the most suitable solution, design and material for your application.' },
-      { icon: 'badge-check', title: 'Select the right manufacturer', text: 'We choose the most qualified manufacturer from our network in Türkiye and worldwide, based on technical and commercial criteria.' },
+      { icon: 'badge-check', title: 'Select the right manufacturer', text: 'We choose the most qualified manufacturer from our network in Turkey and worldwide, based on technical and commercial criteria.' },
       { icon: 'flask-conical', title: 'Field trial', text: 'The recommended solution is tested under real conditions on your site, and its performance is monitored.' },
       { icon: 'shield-check', title: 'Production & quality control', text: 'We coordinate series production and quality control with our manufacturing partner at every stage.' },
       { icon: 'ship', title: 'Delivery & long-term supply', text: 'We manage international logistics, customs clearance and on-time delivery to site, then secure stable long-term supply and technical support.' },
@@ -226,7 +276,7 @@ export const en = {
   // ── industries (brochure 04 "Industries we serve")
   industries: {
     eyebrow: 'Industries we serve',
-    title: 'From Türkiye’s manufacturing base to *operations across Africa*',
+    title: 'From Turkey’s manufacturing base to *operations across Africa*',
     items: [
       { icon: 'pickaxe', title: 'Mining', text: 'Surface & underground mining operations' },
       { icon: 'train-front', title: 'Mining railway systems', text: 'Heavy haul & mining railways' },
@@ -234,8 +284,8 @@ export const en = {
       { icon: 'zap', title: 'Energy', text: 'Power generation & energy projects' },
       { icon: 'construction', title: 'Infrastructure', text: 'Infrastructure & construction projects' },
     ],
-    mapAlt: 'Dotted map showing supply routes from Türkiye to operations across Africa',
-    legendHub: 'Türkiye: manufacturing network',
+    mapAlt: 'Dotted map showing supply routes from Turkey to operations across Africa',
+    legendHub: 'Turkey: manufacturing network',
     legendOps: 'Operations supplied across Africa',
   },
 

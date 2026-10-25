@@ -13,7 +13,7 @@ export const site = {
     postalCode: '06490',
     district: 'Çankaya',
     city: 'Ankara',
-    country: 'Türkiye',
+    country: 'Turkey',
     countryCode: 'TR',
   },
   managingDirector: 'N. Oğulcan Akbaykal',
